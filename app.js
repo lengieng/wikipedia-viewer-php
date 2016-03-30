@@ -35,4 +35,59 @@ $(document).ready(function() {
     $("#random-btn").click(function() {
         window.open('http://en.wikipedia.org/wiki/Special:Random');
     });
+    
+    // Update the result div when ajax is complete
+    $(document).ajaxStop(function () {
+        $("#main").css({"top":"initial",
+                        "position":"initial",
+                        "-webkit-transform":"initial",
+                        "-moz-transform":"initial",
+                        "-ms-transform":"initial",
+                        "transform":"initial"
+                       });
+        $("#result").html(result);
+    });
+    
+    // When user presses ENTER key in the search box
+    $("#search-box").keypress(function(event) {
+        if (event.which == 13) {
+            if ($("#search-box").val() != '') {
+                wikiSearch($("#search-box").val());
+            } else {
+                result = '<div class="col-xs-12"><p class="text-danger">';
+                result += 'Please input your search.</p></div>';
+                $("#result").html(result);
+            }
+        }
+    });
+    
+    // Search button click event
+    $("#search-btn").click(function() {
+        if ($("#search-box").val() != '') {
+            wikiSearch($("#search-box").val());
+        } else {
+            result = '<div class="col-xs-12"><p class="text-danger">';
+            result += 'Please input your search.</p></div>';
+            $("#result").html(result);
+        }
+    });
+    
+    // Search wiki function
+    function wikiSearch(searchText) {
+        result = '';
+        
+        var parm = "what=" + searchText;
+        $.getJSON("app.php", parm, function(data) {
+            if (data.error) {
+                result = '<div class="col-xs-12"><p class="text-danger">' + data.error.message + '</p></div>';
+            } else {
+                $.each(data.query.pages, function(k, v) {
+                    result += '<div class="col-xs-12 result-item">';
+                    result += '<a target="_blank" href="http://en.wikipedia.org/?curid=';
+                    result += v.pageid + '">' + '<h2>' + v.title + '</h2>';
+                    result += '<p>' + v.extract + '</p></div></a>';
+                });
+            }
+        })
+    }
 });
