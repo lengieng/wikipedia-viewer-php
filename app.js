@@ -30,4 +30,9 @@ $(document).ready(function() {
                         "-ms-transform":"translateY(-50%)",
                         "transform":"translateY(-50%)"});
     });
+    
+    // Random button click event
+    $("#random-btn").click(function() {
+        window.open('http://en.wikipedia.org/wiki/Special:Random');
+    });
 });
